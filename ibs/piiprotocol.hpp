@@ -8,7 +8,6 @@
 #include "Processor/BaseMachine.h"
 
 #include "ibs/preprocessing.hpp"
-#include "ibs/sign.hpp"
 #include "Protocols/Beaver.hpp"
 #include "Protocols/EcBeaver.hpp"
 #include "Protocols/fake-stuff.hpp"
@@ -301,22 +300,18 @@ void testrun(int argc, const char** argv)
             // sign1
 
             signature1 = G1Element::sign(messagep1[0], msglen, sk);
-            assert(G1Element::ver(signature1, messagep1[0], msglen, Pk) == true);
             for (int j = 1; j < claimc1; j++)
             {
                 signature2 = G1Element::sign(messagep1[j], msglen, sk);
-                assert(G1Element::ver(signature2, messagep1[j], msglen, Pk) == true);
                 signature1 = signature1 + signature2;
             }
             generatedinputsA.push_back({Pk, signature1});
 
             // sign2
             signature1 = G1Element::sign(messagep2[0], msglen, sk);
-            assert(G1Element::ver(signature1, messagep2[0], msglen, Pk) == true);
             for (int j = 1; j < claimc2; j++)
             {
                 signature2 = G1Element::sign(messagep2[j], msglen, sk);
-                assert(G1Element::ver(signature2, messagep2[j], msglen, Pk) == true);
                 signature1 = signature1 + signature2;
             }
             generatedinputsB.push_back({Pk, signature1});

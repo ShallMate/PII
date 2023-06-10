@@ -67,23 +67,22 @@ ibs/pii.o: ibs/pii.cpp GC/TinierSecret.h GC/TinySecret.h GC/Secret.h \
  Protocols/ShamirShare.h Protocols/MaliciousShamirMC.h \
  Protocols/ShamirMC.h Protocols/Rep3Share.h GC/ShareSecret.h \
  GC/MaliciousCcdSecret.h GC/CcdSecret.h GC/MaliciousCcdShare.h \
- ibs/sign.hpp ibs/preprocessing.hpp Math/gfp.hpp Math/gfpvar.h \
- Math/bigint.hpp Math/Setup.hpp Math/gfp.h Protocols/Beaver.hpp \
- Protocols/Replicated.hpp Protocols/Rep3Share2k.h Protocols/Rep3Share.h \
- GC/square64.h Protocols/ReplicatedPO.hpp Protocols/ReplicatedPO.h \
- Protocols/MaliciousRepPO.h Protocols/MaliciousRepPO.hpp Math/Z2k.hpp \
- Protocols/EcBeaver.hpp Protocols/EcBeaver.h Protocols/fake-stuff.hpp \
- Protocols/MascotPrep.hpp Protocols/MascotPrep.h \
- Protocols/ReplicatedPrep.h OT/Triple.hpp OT/NPartyTripleGenerator.hpp \
- OT/NPartyTripleGenerator.h GC/SemiSecret.h Protocols/SemiMC.h \
- Protocols/MAC_Check.h Protocols/DealerShare.h Protocols/SemiShare.h \
- GC/SemiPrep.h GC/SemiSecret.h OT/OTMultiplier.hpp OT/config.h \
- OT/OTVole.hpp OT/OTVole.h Tools/oct.h OT/Row.hpp OT/Row.h \
+ Protocols/Beaver.hpp Protocols/Replicated.hpp Protocols/Rep3Share2k.h \
+ Protocols/Rep3Share.h GC/square64.h Protocols/ReplicatedPO.hpp \
+ Protocols/ReplicatedPO.h Protocols/MaliciousRepPO.h \
+ Protocols/MaliciousRepPO.hpp Math/Z2k.hpp Protocols/EcBeaver.hpp \
+ Protocols/EcBeaver.h Protocols/fake-stuff.hpp Protocols/MascotPrep.hpp \
+ Protocols/MascotPrep.h Protocols/ReplicatedPrep.h OT/Triple.hpp \
+ OT/NPartyTripleGenerator.hpp OT/NPartyTripleGenerator.h GC/SemiSecret.h \
+ Protocols/SemiMC.h Protocols/MAC_Check.h Protocols/DealerShare.h \
+ Protocols/SemiShare.h GC/SemiPrep.h GC/SemiSecret.h OT/OTMultiplier.hpp \
+ OT/config.h OT/OTVole.hpp OT/OTVole.h Tools/oct.h OT/Row.hpp OT/Row.h \
  OT/Rectangle.hpp OT/Rectangle.h OT/BitMatrix.h OT/OTCorrelator.hpp \
  OT/OTExtensionWithMatrix.h Math/Square.hpp Tools/MMO.hpp Tools/MMO.h \
- BMR/Key.h OT/BitMatrix.hpp Protocols/SemiInput.hpp Protocols/SemiInput.h \
- Protocols/ShamirInput.hpp Protocols/SemiMC.hpp Protocols/SemiMC.h \
- Protocols/MAC_Check.hpp Protocols/mac_key.hpp \
+ BMR/Key.h Math/gfp.hpp Math/gfpvar.h Math/bigint.hpp Math/Setup.hpp \
+ Math/gfp.h OT/BitMatrix.hpp Protocols/SemiInput.hpp \
+ Protocols/SemiInput.h Protocols/ShamirInput.hpp Protocols/SemiMC.hpp \
+ Protocols/SemiMC.h Protocols/MAC_Check.hpp Protocols/mac_key.hpp \
  Protocols/ShuffleSacrifice.hpp Protocols/ShuffleSacrifice.h \
  GC/BitAdder.h Protocols/LimitedPrep.hpp Protocols/LimitedPrep.h \
  Protocols/Spdz2kPrep.hpp Protocols/Spdz2kPrep.h Protocols/RingOnlyPrep.h \
@@ -555,20 +554,6 @@ GC/CcdSecret.h:
 
 GC/MaliciousCcdShare.h:
 
-ibs/sign.hpp:
-
-ibs/preprocessing.hpp:
-
-Math/gfp.hpp:
-
-Math/gfpvar.h:
-
-Math/bigint.hpp:
-
-Math/Setup.hpp:
-
-Math/gfp.h:
-
 Protocols/Beaver.hpp:
 
 Protocols/Replicated.hpp:
@@ -652,6 +637,16 @@ Tools/MMO.hpp:
 Tools/MMO.h:
 
 BMR/Key.h:
+
+Math/gfp.hpp:
+
+Math/gfpvar.h:
+
+Math/bigint.hpp:
+
+Math/Setup.hpp:
+
+Math/gfp.h:
 
 OT/BitMatrix.hpp:
 
