@@ -11,7 +11,7 @@ OT/BaseOT.o: OT/BaseOT.cpp OT/BaseOT.h Networking/Player.h \
  Math/ValueInterface.h Math/gf2n.h Math/ValueInterface.h Math/gf2nlong.h \
  Math/FixedVec.h Tools/benchmarking.h Tools/Bundle.h SimpleOT/ot_sender.h \
  SimpleOT/ge4x.h SimpleOT/gfe4x.h SimpleOT/sc25519.h SimpleOT/ot_config.h \
- SimpleOT/ot_receiver.h ECDSA/P256Element.h Math/gfp.h Math/modp.h \
+ SimpleOT/ot_receiver.h ibs/P256Element.h Math/gfp.h Math/modp.h \
  Math/Zp_Data.h Math/config.h Math/mpn_fixed.h Math/Bit.h Math/BitVec.h \
  Math/Integer.h Math/Integer.hpp Math/Setup.h Tools/mkpath.h \
  Processor/OnlineOptions.h Math/modp.hpp Math/Zp_Data.h Math/modp.h \
@@ -110,7 +110,7 @@ SimpleOT/ot_config.h:
 
 SimpleOT/ot_receiver.h:
 
-ECDSA/P256Element.h:
+ibs/P256Element.h:
 
 Math/gfp.h:
 

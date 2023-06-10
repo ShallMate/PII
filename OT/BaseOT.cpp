@@ -15,11 +15,9 @@ extern "C" {
 }
 #endif
 
-#include "ECDSA/P256Element.h"
+#include "ibs/P256Element.h"
 
-#ifdef USE_RISTRETTO
-#include "ECDSA/CurveElement.h"
-#endif
+
 
 using namespace std;
 

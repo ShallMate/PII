@@ -34,13 +34,8 @@ SHAREDLIB = libSPDZ.so
 FHEOFFLINE = libFHE.so
 LIBRELEASE = librelease.a
 
-ifeq ($(AVX_OT), 0)
-VM += ECDSA/P256Element.o
-OT += ECDSA/P256Element.o
-MINI_OT += ECDSA/P256Element.o
-else
+
 LIBSIMPLEOT = SimpleOT/libsimpleot.a
-endif
 
 # used for dependency generation
 OBJS = $(BMR) $(FHEOBJS) $(TINYOTOFFLINE) $(YAO) $(COMPLETE) $(patsubst %.cpp,%.o,$(wildcard Machines/*.cpp Utils/*.cpp))
@@ -50,7 +45,7 @@ DEPS := $(wildcard */*.d */*/*.d)
 .SECONDARY: $(OBJS) $(patsubst %.cpp,%.o,$(wildcard */*.cpp))
 
 
-all: arithmetic binary gen_input online offline externalIO bmr ecdsa
+all: arithmetic binary gen_input online offline externalIO bmr
 vm: arithmetic binary
 
 .PHONY: doc
@@ -117,11 +112,7 @@ shamir: shamir-party.x malicious-shamir-party.x atlas-party.x galois-degree.x
 
 sy: sy-rep-field-party.x sy-rep-ring-party.x sy-shamir-party.x
 
-ecdsa: $(patsubst ECDSA/%.cpp,%.x,$(wildcard ECDSA/*-ecdsa-party.cpp)) Fake-ECDSA.x
-ecdsa-pciall: $(patsubst ECDSA/%.cpp,%.x,$(wildcard ECDSA/*-ecdsa-pciall.cpp)) Fake-ECDSA.x
-bls: $(patsubst bls/%.cpp,%.x,$(wildcard bls/*-bls-party.cpp)) Fake-bls.x
-ecdsa-static: static-dir $(patsubst ECDSA/%.cpp,static/%.x,$(wildcard ECDSA/*-ecdsa-party.cpp))
-bls-static: static-dir $(patsubst bls/%.cpp,static/%.x,$(wildcard ECDSA/*-ecdsa-party.cpp))
+
 
 $(LIBRELEASE): Protocols/MalRepRingOptions.o $(PROCESSOR) $(COMMONOBJS) $(TINIER) $(GC)
 	$(AR) -csr $@ $^
@@ -138,66 +129,13 @@ $(FHEOFFLINE): $(FHEOBJS) $(SHAREDLIB)
 static/%.x: Machines/%.o $(LIBRELEASE) $(LIBSIMPLEOT)
 	$(CXX) $(CFLAGS) -o $@ $^ -Wl,-Map=$<.map -Wl,-Bstatic -static-libgcc -static-libstdc++  $(LIBRELEASE) $(LIBSIMPLEOT) $(BOOST) $(LDLIBS) -Wl,-Bdynamic -ldl
 
-static/%.x: ECDSA/%.o ECDSA/P256Element.o $(VMOBJS) $(OT) $(LIBSIMPLEOT)
-	$(CXX) $(CFLAGS) -o $@ $^ -Wl,-Map=$<.map -Wl,-Bstatic -static-libgcc -static-libstdc++ $(BOOST) $(LDLIBS) -Wl,-Bdynamic -ldl
-
-static/%.x: bls/%.o bls/P256Element.o $(VMOBJS) $(OT) $(LIBSIMPLEOT)
-	$(CXX) $(CFLAGS) -o $@ $^ -Wl,-Map=$<.map -Wl,-Bstatic -static-libgcc -static-libstdc++ $(BOOST) $(LDLIBS) -Wl,-Bdynamic -ldl
-
 
 static-dir:
 	@ mkdir static 2> /dev/null; true
 
 static-release: static-dir $(patsubst Machines/%.cpp, static/%.x, $(wildcard Machines/*-party.cpp)) static/emulate.x
 
-Fake-ECDSA.x: ECDSA/Fake-ECDSA.cpp ECDSA/P256Element.o $(COMMON) Processor/PrepBase.o
-	$(CXX) -o $@ $^ $(CFLAGS) $(LDLIBS)
 
-Fake-bls.x: bls/Fake-bls.cpp bls/P256Element.o $(COMMON) Processor/PrepBase.o
-	$(CXX) -o $@ $^ $(CFLAGS) $(LDLIBS)
-
-
-ot.x: $(OT) $(COMMON) Machines/OText_main.o Machines/OTMachine.o $(LIBSIMPLEOT)
-	$(CXX) $(CFLAGS) -o $@ $^ $(LDLIBS)
-
-ot-offline.x: $(OT) $(LIBSIMPLEOT) Machines/TripleMachine.o
-
-gc-emulate.x: $(VM) GC/FakeSecret.o GC/square64.o
-
-bmr-%.x: $(BMR) $(VM) Machines/bmr-%.cpp $(LIBSIMPLEOT)
-	$(CXX) -o $@ $(CFLAGS) $^ $(BOOST) $(LDLIBS)
-
-%-bmr-party.x: Machines/%-bmr-party.o $(BMR) $(SHAREDLIB) $(MINI_OT)
-	$(CXX) -o $@ $(CFLAGS) $^ $(BOOST) $(LDLIBS)
-
-bmr-clean:
-	-rm BMR/*.o BMR/*/*.o GC/*.o
-
-bankers-bonus-client.x: ExternalIO/bankers-bonus-client.o $(COMMON)
-	$(CXX) $(CFLAGS) -o $@ $^ $(LDLIBS)
-
-simple-offline.x: $(FHEOFFLINE)
-pairwise-offline.x: $(FHEOFFLINE)
-cnc-offline.x: $(FHEOFFLINE)
-spdz2-offline.x: $(FHEOFFLINE)
-
-yao-party.x: $(YAO)
-static/yao-party.x: $(YAO)
-
-yao-clean:
-	-rm Yao/*.o
-
-galois-degree.x: Utils/galois-degree.o
-	$(CXX) $(CFLAGS) -o $@ $^ $(LDLIBS)
-
-default-prime-length.x: Utils/default-prime-length.o
-	$(CXX) $(CFLAGS) -o $@ $^ $(LDLIBS)
-
-secure.x: Utils/secure.o
-	$(CXX) -o $@ $(CFLAGS) $^
-
-Fake-Offline.x: Utils/Fake-Offline.o $(VM)
-	$(CXX) -o $@ $(CFLAGS) $^ $(LDLIBS)
 
 %.x: Utils/%.o $(COMMON)
 	$(CXX) -o $@ $(CFLAGS) $^ $(LDLIBS)
@@ -205,85 +143,18 @@ Fake-Offline.x: Utils/Fake-Offline.o $(VM)
 %.x: Machines/%.o $(MINI_OT) $(SHAREDLIB)
 	$(CXX) -o $@ $(CFLAGS) $^ $(LDLIBS)
 
-%-ecdsa-party.x: ECDSA/%-ecdsa-party.o ECDSA/P256Element.o $(VM)
-	$(CXX) -o $@ $(CFLAGS) $^ $(LDLIBS)
-%-ecdsa-pciall.x: ECDSA/%-ecdsa-pciall.o ECDSA/P256Element.o $(VM)
-	$(CXX) -o $@ $(CFLAGS) $^ $(LDLIBS)
-%-bls-party.x: bls/%-bls-party.o bls/P256Element.o bls/blsElement.o $(VM)
+
+pii.x: ibs/pii.o ibs/P256Element.o ibs/ibsElement.o $(VM)
 	$(CXX) -o $@ $(CFLAGS) $^ $(LDLIBS) $(LIBRELIC)
-%-blsbench.x: bls/%-blsbench.o bls/P256Element.o bls/blsElement.o $(VM)
-	$(CXX) -o $@ $(CFLAGS) $^ $(LDLIBS) $(LIBRELIC)
-%-ecdsabench.x: ECDSA/%-ecdsabench.o ECDSA/P256Element.o $(VM)
-	$(CXX) -o $@ $(CFLAGS) $^ $(LDLIBS)
-pii.x: bls/pii.o bls/P256Element.o bls/blsElement.o $(VM)
+
+ibs.x: ibs/ibs.o ibs/P256Element.o ibs/ibsElement.o $(VM)
 	$(CXX) -o $@ $(CFLAGS) $^ $(LDLIBS) $(LIBRELIC)
 
 
-replicated-bin-party.x: GC/square64.o
-replicated-ring-party.x: GC/square64.o
-replicated-field-party.x: GC/square64.o
-brain-party.x: GC/square64.o
-malicious-rep-bin-party.x: GC/square64.o
-ps-rep-bin-party.x: GC/PostSacriBin.o
-semi-bin-party.x: $(OT) GC/SemiPrep.o GC/square64.o
-tiny-party.x: $(OT)
-tinier-party.x: $(OT)
-spdz2k-party.x: $(TINIER) $(patsubst %.cpp,%.o,$(wildcard Machines/SPDZ2*.cpp))
-static/spdz2k-party.x: $(patsubst %.cpp,%.o,$(wildcard Machines/SPDZ2*.cpp))
-semi-party.x: $(OT) GC/SemiPrep.o GC/square64.o
-semi2k-party.x: $(OT) GC/SemiPrep.o GC/square64.o
-hemi-party.x: $(FHEOFFLINE) $(GC_SEMI) $(OT)
-temi-party.x: $(FHEOFFLINE) $(GC_SEMI) $(OT)
-soho-party.x: $(FHEOFFLINE) $(GC_SEMI) $(OT)
-cowgear-party.x: $(FHEOFFLINE) Protocols/CowGearOptions.o $(TINIER)
-chaigear-party.x: $(FHEOFFLINE) Protocols/CowGearOptions.o $(TINIER)
-lowgear-party.x: $(FHEOFFLINE) $(TINIER) Protocols/CowGearOptions.o Protocols/LowGearKeyGen.o
-highgear-party.x: $(FHEOFFLINE) $(TINIER) Protocols/CowGearOptions.o Protocols/HighGearKeyGen.o
-atlas-party.x: GC/AtlasSecret.o
-static/hemi-party.x: $(FHEOBJS)
-static/temi-party.x: $(FHEOBJS)
-static/soho-party.x: $(FHEOBJS)
-static/cowgear-party.x: $(FHEOBJS)
-static/chaigear-party.x: $(FHEOBJS)
-static/lowgear-party.x: $(FHEOBJS) Protocols/CowGearOptions.o Protocols/LowGearKeyGen.o
-static/highgear-party.x: $(FHEOBJS) Protocols/CowGearOptions.o Protocols/HighGearKeyGen.o
-mascot-party.x: $(SPDZ)
-static/mascot-party.x: $(SPDZ)
-Player-Online.x: $(SPDZ)
-mama-party.x: $(TINIER)
-ps-rep-ring-party.x: Protocols/MalRepRingOptions.o
-malicious-rep-ring-party.x: Protocols/MalRepRingOptions.o
-sy-rep-ring-party.x: Protocols/MalRepRingOptions.o
-rep4-ring-party.x: GC/Rep4Secret.o
-no-party.x: Protocols/ShareInterface.o
-semi-ecdsa-party.x: $(OT) $(LIBSIMPLEOT) GC/SemiPrep.o
-semi-bls-party.x: $(OT) $(LIBSIMPLEOT) GC/SemiPrep.o
-mascot-ecdsa-party.x: $(OT) $(LIBSIMPLEOT)
-mascot-ecdsa-pciall.x: $(OT) $(LIBSIMPLEOT)
-mascot-bls-party.x: $(OT) $(LIBSIMPLEOT)
-mascot-blsbench.x: $(OT) $(LIBSIMPLEOT)
+
 pii.x: $(OT) $(LIBSIMPLEOT)
-mascot-ecdsabench.x: $(OT) $(LIBSIMPLEOT)
-fake-spdz-ecdsa-party.x: $(OT) $(LIBSIMPLEOT)
-fake-spdz-bls-party.x: $(OT) $(LIBSIMPLEOT)
-emulate.x: GC/FakeSecret.o
-semi-bmr-party.x: GC/SemiPrep.o $(OT)
-real-bmr-party.x: $(OT)
-paper-example.x: $(VM) $(OT) $(FHEOFFLINE)
-binary-example.x: $(VM) $(OT) GC/PostSacriBin.o GC/SemiPrep.o GC/AtlasSecret.o
-mixed-example.x: $(VM) $(OT) GC/PostSacriBin.o GC/SemiPrep.o GC/AtlasSecret.o Machines/Tinier.o
-l2h-example.x: $(VM) $(OT) Machines/Tinier.o
-mascot-offline.x: $(VM) $(TINIER)
-cowgear-offline.x: $(TINIER) $(FHEOFFLINE)
-static/rep-bmr-party.x: $(BMR)
-static/mal-rep-bmr-party.x: $(BMR)
-static/shamir-bmr-party.x: $(BMR)
-static/mal-shamir-bmr-party.x: $(BMR)
-static/semi-bmr-party.x: $(BMR)
-static/real-bmr-party.x: $(BMR)
-static/bmr-program-party.x: $(BMR)
-static/no-party.x: Protocols/ShareInterface.o
-Test/failure.x: Protocols/MalRepRingOptions.o
+ibs.x: $(OT) $(LIBSIMPLEOT)
+
 
 ifeq ($(AVX_OT), 1)
 $(LIBSIMPLEOT): SimpleOT/Makefile
@@ -294,37 +165,6 @@ OT/BaseOT.o: SimpleOT/Makefile
 SimpleOT/Makefile:
 	git submodule update --init SimpleOT
 endif
-
-.PHONY: Programs/Circuits
-Programs/Circuits:
-	git submodule update --init Programs/Circuits
-
-.PHONY: mpir-setup mpir-global mpir
-mpir-setup:
-	git submodule update --init mpir || git clone http://github.com/wbhart/mpir
-	cd mpir; \
-	autoreconf -i; \
-	autoreconf -i
-	- $(MAKE) -C mpir clean
-
-mpir-global: mpir-setup
-	cd mpir; \
-	./configure --enable-cxx;
-	$(MAKE) -C mpir
-	sudo $(MAKE) -C mpir install
-
-mpir: mpir-setup
-	cd mpir; \
-	./configure --enable-cxx --prefix=$(CURDIR)/local
-	$(MAKE) -C mpir install
-	-echo MY_CFLAGS += -I./local/include >> CONFIG.mine
-	-echo MY_LDLIBS += -Wl,-rpath -Wl,$(CURDIR)/local/lib -L$(CURDIR)/local/lib >> CONFIG.mine
-
-mac-setup: mac-machine-setup
-	brew install openssl boost libsodium mpir yasm ntl
-	-echo MY_CFLAGS += -I/usr/local/opt/openssl/include -I/opt/homebrew/opt/openssl/include -I/opt/homebrew/include >> CONFIG.mine
-	-echo MY_LDLIBS += -L/usr/local/opt/openssl/lib -L/opt/homebrew/lib -L/opt/homebrew/opt/openssl/lib >> CONFIG.mine
-#	-echo USE_NTL = 1 >> CONFIG.mine
 
 ifeq ($(MACHINE), aarch64)
 mac-machine-setup:

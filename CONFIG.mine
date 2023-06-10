@@ -1,4 +1,4 @@
 MY_CFLAGS += -I./local/include
-MY_LDLIBS += -Wl,-rpath -Wl,/home/lgw/c++/pci/local/lib -L/home/lgw/c++/pci/local/lib
+MY_LDLIBS += -Wl,-rpath -Wl,/home/lgw/c++/pii/local/lib -L/home/lgw/c++/pii/local/lib
 MY_CFLAGS += -I./local/include
 MY_LDLIBS += -Wl,-rpath -Wl,/home/lgw/c++/pii/local/lib -L/home/lgw/c++/pii/local/lib

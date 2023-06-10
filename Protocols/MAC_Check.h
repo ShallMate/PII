@@ -11,7 +11,7 @@ using namespace std;
 #include "Networking/Player.h"
 #include "Protocols/MAC_Check_Base.h"
 #include "Tools/time-func.h"
-#include "../bls/thread_pool.hpp"
+#include "../ibs/thread_pool.hpp"
 
 
 /* The MAX number of things we will partially open before running
