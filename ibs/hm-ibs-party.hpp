@@ -13,7 +13,6 @@
 #include "GC/VectorInput.h"
 
 #include "ibs/preprocessing.hpp"
-#include "ibs/sign.hpp"
 #include "Protocols/MaliciousRepMC.hpp"
 #include "Protocols/Beaver.hpp"
 #include "Protocols/fake-stuff.hpp"

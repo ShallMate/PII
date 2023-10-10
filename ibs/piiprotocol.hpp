@@ -188,15 +188,6 @@ void testrun(int argc, const char** argv)
             0, // Required?
             1, // Number of args expected.
             0, // Delimiter if expecting multiple args.
-            "Number of Claims", // Help description.
-            "-K", // Flag token.
-            "--claims" // Flag token.
-    );
-    opt.add(
-            "", // Default.
-            0, // Required?
-            1, // Number of args expected.
-            0, // Delimiter if expecting multiple args.
             "Intersection Size", // Help description.
             "-O", // Flag token.
             "--common" // Flag token.
@@ -211,10 +202,7 @@ void testrun(int argc, const char** argv)
         cout << "default input size 10" << endl;
     }
 
-    int CLAIMS = INPUTSIZE;
-    if (opt.get("-K")->isSet){
-        opt.get("-K")->getInt(CLAIMS);
-    }
+    int CLAIMS = 1;
 
     cout << ">>>> Input size (each party)," << INPUTSIZE << "," << endl;
     cout << ">>>> Messages of each party," << CLAIMS << "," << endl;
@@ -638,7 +626,6 @@ void testrun(int argc, const char** argv)
             pool.push_task([&c4, &c1, &c2, &c3, &open_rands, i,j, INPUTSIZE]{
                     c4[(INPUTSIZE*i) + j] = c3[(INPUTSIZE*i) + j] + exp_gt_scalar(c1[i], open_rands[1]) + exp_gt_scalar(c2[j], open_rands[2]);
                 });
-                // c4[(INPUTSIZE*i) + j] = c3item + exp_gt_scalar(c1item, or1) + exp_gt_scalar(c2item, or2);
         }
     }
     pool.wait_for_tasks();
@@ -654,17 +641,8 @@ void testrun(int argc, const char** argv)
     cout << ">>>> w_{i,j} computation," << (tc4 - tc3) * 1e3 << ", ms" << endl;
 
     cout << "-- computing k_{i,j} --" << endl;
-    //cout << "-- private random * c4s --" << endl;
     gtprotocol.init_mul();
-    // for (int i = 0; i < INPUTSIZE; i++)
-    // {
-    //     for (int j = 0; j < INPUTSIZE; j++){
-    //         gtprotocol.prepare_scalar_mul(myrandomshares[(INPUTSIZE*i) + j], c4[(INPUTSIZE*i) + j]);
-    //     }
-    // }
     gtprotocol.prepare_scalar_mul_parallel(pool, myrandomshares, c4, INPUTSIZE * INPUTSIZE);
-
-
     // free unused vector
     vector<scalarShare>().swap(myrandomshares);
     vector<gtShare>().swap(c4);
@@ -683,12 +661,7 @@ void testrun(int argc, const char** argv)
     typename g2Share::clear g2_result;
     GtElement gtunity;
     gt_output.init_open(P);
-    for (int i = 0; i < INPUTSIZE; i++)
-    {
-        for (int j = 0; j < INPUTSIZE; j++){
-            gt_output.prepare_open(c4_rand[(INPUTSIZE*i) + j]);
-        }
-    }
+
 
     // free unused vector
     vector<gtShare>().swap(c4_rand);
@@ -741,8 +714,4 @@ void testrun(int argc, const char** argv)
     cout << "-- end --" << endl;
 
     cout << ">>>> Final time," << timer.elapsed() * 1e3 << ", ms" << endl;
-    (P.total_comm() - stats).print(true);
-
-
-    
 }

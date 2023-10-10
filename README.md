@@ -1,3 +1,5 @@
+# PII: PII can securely compute common identities (IDs) among multiple parties.
+
 **Install relic:**
 ```
 git clone git@github.com:relic-toolkit/relic.git
@@ -11,7 +13,6 @@ sudo make install
 
 **Build pii:**
 ```
-
 cd PII
 make -j8 pii.x 
 ```
